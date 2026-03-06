@@ -1,16 +1,22 @@
 import dotenv from "dotenv";
 import connectDB from "../src/config/db.js";
 import mongoose from "mongoose";
+import { MongoMemoryServer } from "mongodb-memory-server";
 
 // Load environment variables from workspace .env (one level up)
 dotenv.config({ path: "../.env" });
 
-// Connect to DB before tests
+let mongoServer;
+
+// Start in-memory MongoDB and connect
 beforeAll(async () => {
+	mongoServer = await MongoMemoryServer.create();
+	process.env.MONGO_URI = mongoServer.getUri();
 	await connectDB();
 });
 
-// Close DB connection after tests to avoid open handles
+// Close DB connection and stop in-memory server
 afterAll(async () => {
 	await mongoose.disconnect();
+	if (mongoServer) await mongoServer.stop();
 });
