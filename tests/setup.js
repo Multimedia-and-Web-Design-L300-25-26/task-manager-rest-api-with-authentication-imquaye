@@ -10,7 +10,7 @@ let mongoServer;
 
 // Start in-memory MongoDB and connect
 beforeAll(async () => {
-	mongoServer = await MongoMemoryServer.create();
+	mongoServer = await MongoMemoryServer.create({ instance: { args: ["--quiet"] } });
 	process.env.MONGO_URI = mongoServer.getUri();
 	await connectDB();
 });
